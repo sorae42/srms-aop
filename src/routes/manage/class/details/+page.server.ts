@@ -46,7 +46,6 @@ export const actions = {
 		});
 
 		if (error) {
-			console.log(error);
 			return fail(400, { error: true });
 		}
     },
@@ -57,7 +56,6 @@ export const actions = {
 		let { error } = await supabase.from('participation').delete().eq('student_id', formData.get('id'));
 
 		if (error) {
-			console.log(error);
 			return fail(400, { error: true });
 		}
 	}

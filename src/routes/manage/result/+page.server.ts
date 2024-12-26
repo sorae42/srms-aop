@@ -43,7 +43,6 @@ export const actions = {
 		});
 
 		if (error) {
-			console.log(error);
 			return fail(400, { score, error: true });
 		}
 
@@ -75,7 +74,6 @@ export const actions = {
 			.eq('id', id);
 
 		if (error) {
-			console.log(error);
 			return fail(400, { score, error: true });
 		}
 

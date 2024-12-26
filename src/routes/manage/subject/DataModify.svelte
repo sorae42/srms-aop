@@ -24,7 +24,6 @@
 
 	// FIXME: form is null.
 	export let form: ActionData;
-	$: console.log(form);
 
 	let disabled = false;
 
@@ -32,7 +31,6 @@
 		disabled = true;
 		return async () => {
 			disabled = false;
-			console.log(form);
 			if (form?.error) {
 				toastStore.trigger({
 					message: 'Không thể xử lý yêu cầu.',

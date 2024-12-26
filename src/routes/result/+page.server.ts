@@ -21,8 +21,6 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
 		e.total_four = (total / 10) * 4;
 		e.total_rating = rating[Math.trunc(e.total_four)];
 	})
-	
-	console.log(score);
 
 	return { session, score };
 };

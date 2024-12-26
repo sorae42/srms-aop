@@ -39,7 +39,6 @@
 				type: DELETE_DETAILS_MODAL,
 				id: studentList?.find((x) => x.student_id == detailsTable[index].student_id)?.id
 			};
-			console.log(UpcomingMeta);
 		}
 
 		let DataModal: ModalSettings = {

@@ -23,7 +23,6 @@
 	// let phoneNumber: number = + profile?.phone_number ?? '';
 	let gender: boolean = profile?.gender ?? '';
 
-	console.log(gender);
 
 	const handleSubmit = () => {
 		loading = true;

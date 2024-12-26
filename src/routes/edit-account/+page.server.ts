@@ -41,7 +41,6 @@ export const actions = {
 		});
 
 		if (error) {
-			console.log(error);
 			return fail(500, data);
 		}
 

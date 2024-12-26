@@ -41,7 +41,6 @@ export const actions = {
 		.upsert(classInput);
 
 		if (error) {
-			console.log(error);
 			return fail(400, { error: true });
 		}
     },
@@ -52,7 +51,6 @@ export const actions = {
 		let { error } = await supabase.from('class').delete().eq('id', formData.get('id'));
 
 		if (error) {
-			console.log(error);
 			return fail(400, { error: true });
 		}
 	}

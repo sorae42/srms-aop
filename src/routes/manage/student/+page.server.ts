@@ -55,8 +55,6 @@ export const actions = {
 			}
 
 			ID = userID;
-
-			console.log(ID);
 		}
 		else {
 			ID = formData.get('id');
@@ -80,7 +78,6 @@ export const actions = {
 		.upsert(profile);
 
 		if (error) {
-			console.log(error);
 			return fail(400, { error: true });
 		}
     },
@@ -97,7 +94,6 @@ export const actions = {
 		let { error } = await supabaseAdmin.auth.admin.deleteUser(ID);
 
 		if (error) {
-			console.log(error);
 			return fail(400, { error: true });
 		}
 	}

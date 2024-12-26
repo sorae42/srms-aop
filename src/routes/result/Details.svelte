@@ -6,8 +6,6 @@
 	export let parent: SvelteComponent;
 
 	let data = $modalStore[0].meta;
-
-	console.log(data);
 </script>
 
 {#if $modalStore[0]}

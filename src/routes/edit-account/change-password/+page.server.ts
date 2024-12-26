@@ -19,7 +19,6 @@ export const actions = {
 		const conpass = data.get('confirm-password');
 
 		if (newpass !== conpass) {
-			console.log(`pass unmatch: ${newpass} ${conpass}`);
 			return fail(400, { error: true, message: 'Mật khẩu không trùng khớp!' });
 		}
 	}

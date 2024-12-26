@@ -31,12 +31,10 @@
 
 	let disabled = false;
 	export let form: ActionData;
-	$: console.log(form);
 	function formEnhance() {
 		disabled = true;
 		return async () => {
 			disabled = false;
-			console.log(form);
 			if (form?.error) {
 				toastStore.trigger({
 					message: 'Không thể xử lý yêu cầu.',

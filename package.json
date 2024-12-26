@@ -40,6 +40,8 @@
   },
   "type": "module",
   "dependencies": {
+    "@aspectjs/common": "^0.5.3",
+    "@aspectjs/core": "^0.5.3",
     "@floating-ui/dom": "1.5.3",
     "@supabase/auth-helpers-sveltekit": "^0.10.7",
     "@supabase/auth-ui-shared": "^0.1.8",

@@ -26,7 +26,6 @@
 
 	function formEnhance() {
 		return async () => {
-			console.log(form);
 			if (form?.error) {
 				toastStore.trigger({
 					message: 'Không thể xử lí yêu cầu',
