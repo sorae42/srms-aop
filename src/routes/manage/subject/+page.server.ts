@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { SubjectService } from '$lib/services/subject.service';
 
 export const load: PageServerLoad = async ({ depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
@@ -11,26 +11,16 @@ export const load: PageServerLoad = async ({ depends, locals: { supabase, getSes
 
 	depends('subject:reload');
 
-	let subject = await getData(supabase);
+	let subjectService = new SubjectService(supabase);
+	let subject = await subjectService.getSubjects();
 
 	return { session, subject };
 };
 
 export const actions = {
 	create: async ({ request, locals: { supabase, getSession } }) => {
-		const data = await request.formData();
-		const name = await data.get('subject');
-		const credits = await data.get('credits');
-
-		let subject = {
-			name,
-			credits
-		};
-
-		const { error } = await supabase.from('subject').insert({
-			...subject,
-			updated_at: new Date()
-		});
+		let subjectService = new SubjectService(supabase);
+		let { subject, error } = await subjectService.createSubject(request);
 
 		if (error) {
 			return fail(400, { subject, error: true });
@@ -39,21 +29,8 @@ export const actions = {
 		return subject;
 	},
 	update: async ({ request, locals: { supabase, getSession } }) => {
-		const data = await request.formData();
-		const id = await data.get('id');
-		const name = await data.get('subject');
-		const credits = await data.get('credits');
-
-		const subject = {
-			id,
-			name,
-			credits
-		};
-
-		const { error } = await supabase.from('subject').upsert({
-			...subject,
-			updated_at: new Date()
-		});
+		let subjectService = new SubjectService(supabase);
+		let { subject, error } = await subjectService.updateSubject(request);
 
 		if (error) {
 			return fail(400, { subject, error: true });
@@ -62,12 +39,3 @@ export const actions = {
 		return subject;
 	}
 };
-
-async function getData(supabase: SupabaseClient) {
-	const { data: subject } = await supabase
-		.from('subject')
-		.select(`id, name, credits`)
-		.order('id', { ascending: true });
-
-	return subject;
-}

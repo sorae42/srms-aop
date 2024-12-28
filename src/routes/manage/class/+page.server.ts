@@ -1,55 +1,35 @@
 import { redirect, fail } from '@sveltejs/kit';
-import type { Actions } from './$types'
+import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
+import { ClassService } from '$lib/services/class.service';
 
 export const load: PageServerLoad = async ({ depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
-    depends('class:reload');
+	depends('class:reload');
 
 	if (!session) {
 		throw redirect(303, '/');
 	}
 
-    const { data: classes } = await supabase
-        .from('class')
-        .select('id, subject_id, ...subject_id(name), teacher_id, ...teacher_id(full_name)');
+	let classService = new ClassService(supabase);
+	let data = await classService.getClassList();
 
-    const { data: subjects } = await supabase
-        .from('subject')
-        .select('id, name');
-    
-    const { data: teachers } = await supabase
-        .from('profiles')
-        .select('id, full_name')
-		.eq('permission', 1);
-
-    return { session, classes, subjects, teachers };
+	return { session, ...data };
 };
 
 export const actions = {
-    upsert: async ({ locals: { supabase }, request }) => {
-		const formData = await request.formData();
-
-		let classInput = {
-            id: formData.get('id'),
-            subject_id: formData.get('subject_id'),
-            teacher_id: formData.get('teacher_id')
-        };
-		
-		let { error } = await supabase
-		.from('class')
-		.upsert(classInput);
+	upsert: async ({ locals: { supabase }, request }) => {
+		let classService = new ClassService(supabase);
+		let { error } = await classService.updateClass(request);
 
 		if (error) {
 			return fail(400, { error: true });
 		}
-    },
+	},
 
 	delete: async ({ locals: { supabase }, request }) => {
-		const formData = await request.formData();
-
-		let { error } = await supabase.from('class').delete().eq('id', formData.get('id'));
-
+		let classService = new ClassService(supabase);
+		let { error } = await classService.deleteClass(request);
 		if (error) {
 			return fail(400, { error: true });
 		}

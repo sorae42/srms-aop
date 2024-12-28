@@ -1,6 +1,7 @@
 // @ts-nocheck - Using undocumented TS method from Supabase
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { ScoreService } from '$lib/services/score.service';
 
 const rating = ["F", "D", "C", "B", "A"];
 
@@ -11,10 +12,8 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
 		throw redirect(303, '/');
 	}
 
-	const { data: score } = await supabase
-		.from('score')
-		.select(`id, ...subject_id(name, credits), progress, mid_term, last_term, total`)
-		.eq('student_id', session.user.id);
+	let scoreService = new ScoreService(supabase);
+	let score = await scoreService.getScoreById(session.user.id);
 	
 	score?.forEach((e) => {
 		let total = e.total;

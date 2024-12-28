@@ -1,4 +1,5 @@
 import { redirect } from "@sveltejs/kit";
+import { AccountService } from "$lib/services/account.service.js";
 
 export const load = async ({ locals: { supabase, getSession } }) => {
 	const session = await getSession();
@@ -7,11 +8,8 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 		throw redirect(303, '/');
 	}
 
-	const { data: profile } = await supabase
-		.from('profiles')
-		.select(`full_name, date_of_birth, gender, address, phone_number`)
-		.eq('id', session.user.id)
-		.single();
+	let accountService = new AccountService(supabase);
+	let profile = await accountService.getAccount(session.user.id);
 
 	return { session, profile };
 };

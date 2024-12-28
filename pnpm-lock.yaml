@@ -29,6 +29,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.39.3
         version: 2.39.3
+      kaop-ts:
+        specifier: ^4.3.0
+        version: 4.3.0
     devDependencies:
       '@skeletonlabs/skeleton':
         specifier: 2.2.0
@@ -975,6 +978,13 @@ packages:
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
 
+  kaop-ts@4.3.0:
+    resolution: {integrity: sha512-EZs/SMF75azZkKCA9l4GCaGDf46vLd1s849j15Mi2UKxeVZQl22/3WUe4mz2c0tbaN0flsoV1Pk+ZFAdD9JZGw==}
+    engines: {node: '>=6.0.0'}
+
+  kaop@4.4.2:
+    resolution: {integrity: sha512-Z7iOYSNxC9VlurHGdzxVGCOUkSomgPndeon/HTYUgH6DEWikKxx44n1V1c8HIxjWzNmaQI2Oe9xn8+aBbRAPzw==}
+
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
@@ -1275,6 +1285,9 @@ packages:
   readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
+
+  reflect-metadata@0.1.14:
+    resolution: {integrity: sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==}
 
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
@@ -2531,6 +2544,13 @@ snapshots:
 
   json-stable-stringify-without-jsonify@1.0.1: {}
 
+  kaop-ts@4.3.0:
+    dependencies:
+      kaop: 4.4.2
+      reflect-metadata: 0.1.14
+
+  kaop@4.4.2: {}
+
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
@@ -2771,6 +2791,8 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
+
+  reflect-metadata@0.1.14: {}
 
   reflect-metadata@0.2.2:
     optional: true

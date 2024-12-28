@@ -1,3 +1,4 @@
+import { AccountService } from '$lib/services/account.service';
 import { fail, redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals: { supabase, getSession } }) => {
@@ -7,38 +8,22 @@ export const load = async ({ locals: { supabase, getSession } }) => {
 		throw redirect(303, '/');
 	}
 
-	const { data: profile } = await supabase
-		.from('profiles')
-		.select(`full_name, date_of_birth, gender, address, phone_number`)
-		.eq('id', session.user.id)
-		.single();
+	let accountService = new AccountService(supabase);
+	let profile = await accountService.getAccount(session.user.id);
 
 	return { session, profile };
 };
 
 export const actions = {
 	update: async ({ request, locals: { supabase, getSession } }) => {
-		const formData = await request.formData();
 		const session = await getSession();
 
-		const fields: string[] = ['full_name', 'date_of_birth', 'gender', 'phone_number'];
-
-		const data: Record<string, string | boolean> = {};
-
-		for (const field of fields) {
-			const value = formData.get(field);
-			if (value !== null && value !== undefined) {
-				data[field] = value as string;
-			}
+		if (!session) {
+			throw redirect(303, '/');
 		}
 
-		data.gender = data.gender === 'men';
-
-		const { error } = await supabase.from('profiles').upsert({
-			id: session?.user.id,
-			...data,
-			updated_at: new Date()
-		});
+		let accountService = new AccountService(supabase);
+		let { data, error } = await accountService.updateAccount(session.user.id, request);
 
 		if (error) {
 			return fail(500, data);

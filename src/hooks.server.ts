@@ -2,16 +2,19 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/publi
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
 import type { Handle } from '@sveltejs/kit';
 
+var avg = 0, amount = 0;
+
 export const handle: Handle = async ({ event, resolve }) => {
+	console.log(`${event.request.method}: ${event.url.pathname}`);
+    console.log(`Request time: ${new Date().toLocaleString()}\n`);
+
+	let start = performance.now();
 	event.locals.supabase = createSupabaseServerClient({
 		supabaseUrl: PUBLIC_SUPABASE_URL,
 		supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
 		event
 	});
 
-	/**
-	 * A convenience helper so we can just call await getSession() instead const { data: { session } } = await supabase.auth.getSession()
-	 */
 	event.locals.getSession = async () => {
 		const {
 			data: { session }
@@ -19,9 +22,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return session;
 	};
 
-	return resolve(event, {
+	const response = await resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range';
 		}
 	});
+
+	let end = performance.now();
+	let diff = end - start;
+	console.log(`\nResponse status: ${response.status} (took ${diff}ms)\n`);
+	console.log("-----------------------------------------------------------")
+	
+	return response;
 };

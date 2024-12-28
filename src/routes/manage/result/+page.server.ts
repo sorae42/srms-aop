@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { ScoreService } from '$lib/services/score.service';
 
 export const load: PageServerLoad = async ({ depends, locals: { supabase, getSession } }) => {
 	const session = await getSession();
@@ -11,37 +11,18 @@ export const load: PageServerLoad = async ({ depends, locals: { supabase, getSes
 
 	depends('score:reload');
 
-	let score = await getData(supabase);
-	let students = await getStudents(supabase);
-	let subject = await getSubject(supabase);
+	let scoreService = new ScoreService(supabase);
+	let score = await scoreService.getScores();
+	let students = await scoreService.getStudents();
+	let subject = await scoreService.getSubject();
 
 	return { session, score, students, subject };
 };
 
 export const actions = {
 	create: async ({ request, locals: { supabase, getSession } }) => {
-		const data = await request.formData();
-		const student_id = await data.get('student_id');
-		const subject_id = await data.get('subject_id');
-		const progress = await data.get('progress');
-		const mid_term = await data.get('mid_term');
-		const last_term = await data.get('last_term');
-		const total = await data.get('total');
-
-		let score = {
-			student_id,
-			subject_id,
-			progress,
-			mid_term,
-			last_term,
-			total
-		};
-
-		const { error } = await supabase.from('score').insert({
-			...score,
-			updated_at: new Date()
-		});
-
+		let scoreService = new ScoreService(supabase);
+		let { score, error } = await scoreService.createScore(request);
 		if (error) {
 			return fail(400, { score, error: true });
 		}
@@ -49,29 +30,8 @@ export const actions = {
 		return score;
 	},
 	update: async ({ request, locals: { supabase, getSession } }) => {
-		const data = await request.formData();
-		const id = await data.get('score_id');
-		const subject_id = await data.get('subject_id');
-		const progress = await data.get('progress');
-		const mid_term = await data.get('mid_term');
-		const last_term = await data.get('last_term');
-		const total = await data.get('total');
-		const score = {
-			id,
-			subject_id,
-			progress,
-			mid_term,
-			last_term,
-			total
-		};
-
-		const { error } = await supabase
-			.from('score')
-			.update({
-				...score,
-				updated_at: new Date()
-			})
-			.eq('id', id);
+		let scoreService = new ScoreService(supabase);
+		let { score, error } = await scoreService.updateScore(request);
 
 		if (error) {
 			return fail(400, { score, error: true });
@@ -80,29 +40,3 @@ export const actions = {
 		return score;
 	}
 };
-
-async function getData(supabase: SupabaseClient) {
-	const { data: score } = await supabase
-		.from('score')
-		.select(
-			'id, student_id, ...student_id(student_id, full_name),subject_id, ...subject_id(name) ,progress , mid_term , last_term, total '
-		)
-		.order('id', { ascending: true });
-
-	return score;
-}
-
-async function getStudents(supabase: SupabaseClient) {
-	const { data: students } = await supabase
-		.from('profiles')
-		.select('id, full_name, student_id')
-		.eq('permission', 0);
-
-	return students;
-}
-
-async function getSubject(supabase: SupabaseClient) {
-	const { data: subject } = await supabase.from('subject').select('id, name ');
-
-	return subject;
-}
